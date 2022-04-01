@@ -55,7 +55,12 @@ def display_prediction(
 
     # Display predictions on top of original image
     plt.imshow(np.array(img))
+    i = 1
     for mask in masks:
+        im = Image.fromarray(np.uint8(255*mask.resize(img).binary_mask))
+        filename = mask.class_name+".jpg" # daft : class_id pode ser melhor
+        im.save(filename)
+        i = i+1
         plt.imshow(mask.resize(img).binary_mask, cmap='jet', alpha=0.65)
     plt.show()
 
