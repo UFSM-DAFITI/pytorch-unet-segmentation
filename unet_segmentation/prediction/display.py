@@ -23,6 +23,44 @@ DEEP_FASHION2_CUSTOM_CLASS_MAP = {
 }
 
 
+def daftpunk(
+        unet: Unet,
+        image_path: str,
+        image_resize: int = 512,
+        label_map: dict = DEEP_FASHION2_CUSTOM_CLASS_MAP,
+        device: str = 'cuda',
+        min_area_rate: float = 0.05) -> None:
+
+    # Load image tensor
+    img = Image.open(image_path)
+    img_tensor = _preprocess_image(img, image_size=image_resize).to(device)
+
+    # Predict classes from model
+    prediction_map = \
+        torch.argmax(unet(img_tensor), dim=1).squeeze(0).cpu().numpy()
+
+    # Remove spurious classes
+    classes = prediction_to_classes(prediction_map, label_map)
+    predicted_classes = list(
+        filter(lambda x: x.area_ratio >= min_area_rate, classes))
+    spurious_classes = list(
+        filter(lambda x: x.area_ratio < min_area_rate, classes))
+    clean_prediction_map = remove_predictions(spurious_classes, prediction_map)
+
+    # Get masks for each of the predictions
+    masks = [
+        mask_from_prediction(predicted_class, clean_prediction_map)
+        for predicted_class in predicted_classes
+    ]
+
+    # Display predictions on top of original image
+    for mask in masks:        
+        lowresmask = Image.fromarray(np.uint8(255*mask.binary_mask))
+        im = lowresmask.resize(img.size, Image.ANTIALIAS)
+        filename = mask.class_name+".jpg" # daft : class_id pode ser melhor
+        im.save(filename)
+
+
 def display_prediction(
         unet: Unet,
         image_path: str,
@@ -55,15 +93,12 @@ def display_prediction(
 
     # Display predictions on top of original image
     plt.imshow(np.array(img))
-    i = 1
     for mask in masks:
-        im = Image.fromarray(np.uint8(255*mask.resize(img).binary_mask))
-        filename = mask.class_name+".jpg" # daft : class_id pode ser melhor
-        im.save(filename)
-        i = i+1
+#        im = Image.fromarray(np.uint8(255*mask.resize(img).binary_mask))
+#        filename = mask.class_name+".jpg" # daft : class_id pode ser melhor
+#        im.save(filename)
         plt.imshow(mask.resize(img).binary_mask, cmap='jet', alpha=0.65)
     plt.show()
-
 
 def _preprocess_image(image: Image, image_size: int) -> torch.Tensor:
     preprocess_pipeline = transforms.Compose([
