@@ -13,7 +13,8 @@ if __name__ == "__main__":
       from unet_segmentation.prediction.display import daftpunk
       #esse import é feito a partir das pastas do projeto
       
-      url = sys.argv[1]
+      url = urllib.parse.quote(sys.argv[1],safe=':/')
+      print (url)
 
       urllib.request.urlretrieve(url, "foto.jpg")
 
