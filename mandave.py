@@ -14,8 +14,7 @@ if __name__ == "__main__":
       #esse import é feito a partir das pastas do projeto
       
       url = urllib.parse.quote(sys.argv[1],safe=':/')
-      print (url)
-
+      
       urllib.request.urlretrieve(url, "foto.jpg")
 
       '''Realiza a segmentação semântica da imagem em foto.jpg. O resultado da 
