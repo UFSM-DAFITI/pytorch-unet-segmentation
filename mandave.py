@@ -33,8 +33,14 @@ if __name__ == "__main__":
       "shorts" -> shorts, calção
       '''
 
-      model = torch.load('unet.pt')   #esse unet_iter_1300000.pt (modelo treinado) e mudar o nome para unet.pt deve ser feito o download no link https://drive.google.com/file/d/1sC_puW3pc6P75KTi2hJxgjgUiZo3zl1Q/view
-      mascaras = daftpunk(model, 'foto.jpg') #Aqui só precisa colocar o nome da imagem e ela precisa estar no mesmo path do algoritmo, ela precisa ser um formato JPEG (se for PNG vai apontar que da erro com o canal alpha)
+      if torch.cuda.is_available():
+        model = torch.load('unet.pt')
+         #esse unet_iter_1300000.pt (modelo treinado) e mudar o nome para unet.pt deve ser feito o download no link https://drive.google.com/file/d/1sC_puW3pc6P75KTi2hJxgjgUiZo3zl1Q/view
+        mascaras = daftpunk(model, 'foto.jpg')
+       #Aqui só precisa colocar o nome da imagem e ela precisa estar no mesmo path do algoritmo, ela precisa ser um formato JPEG (se for PNG vai apontar que da erro com o canal alpha)
+      else:
+        model = torch.load('unet.pt', map_location=torch.device('cpu'))
+        mascaras = daftpunk(model, 'foto.jpg', device ='cpu')
       # daft : alterei a função e agora ela realiza a predição e salva as classes encontradas em um dicionário. Para acessar uma máscara em específico,
       # utilize mascaras[coisa] em que coisa pode ser "trousers", "skirt", "top", "dress", "outwear" ou "shorts"
 
