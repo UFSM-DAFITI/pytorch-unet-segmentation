@@ -60,3 +60,10 @@ display_prediction(model, 'example.png')
 - [ ] Port code to Pytorch Ignite.
 - [ ] Generate masks in a GAN-fashion. 
 - [ ] Explore using trained model for clothing retrieval.
+
+# DAFT
+Download weights and test avatar: 
+python downloadweights.py
+
+Run prediction: 
+python mandave.py <imageurl>
