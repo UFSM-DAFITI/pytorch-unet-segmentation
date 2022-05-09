@@ -66,4 +66,4 @@ Download weights and test avatar:
 python downloadweights.py
 
 Run prediction: 
-python mandave.py <imageurl>
+python mandave.py \<imageurl\>
