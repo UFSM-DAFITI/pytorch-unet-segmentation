@@ -103,7 +103,7 @@ def _train_step(image_batch: torch.Tensor,
         images=image_batch,
         masks=torch.unsqueeze(mask_batch, dim=1),
         predictions=predicted_masks,
-        loss=loss,
+        loss=loss.detach(),
         iou_value=mean_iou(mask_batch, predicted_masks)
     )
 
