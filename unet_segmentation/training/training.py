@@ -1,6 +1,7 @@
 import os
 from dataclasses import dataclass
 from typing import Tuple
+from tqdm import tqdm
 
 import numpy as np
 
@@ -173,9 +174,10 @@ def fit(params: TrainingParams) -> None:
     train_writer, val_writer = _initialize_writers(params)
     stats = MovingStats()
 
+    # for epoch in tqdm(range(params.n_epochs)):
     for epoch in range(params.n_epochs):
 
-        for batch_idx, (imgs, masks) in enumerate(params.train_loader):
+        for batch_idx, (imgs, masks) in enumerate(tqdm(params.train_loader)):
 
             # Configure batch data
             iteration = epoch * n_batches + batch_idx + iteration_offset
